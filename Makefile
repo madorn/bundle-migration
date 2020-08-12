@@ -1,3 +1,8 @@
+# REQUIRED MANUAL STEPS BEFORE RUNNING THIS
+# 1. Login access.redhat.com with your masquared account 
+# 2. Create a new certification project of type 'operator bundle image'
+# 3. remove package-lock or ask someone to do it for the migrating operator
+
 MANIFEST_DIR=
 OUTPUT_DIR=
 OUTPUT_TAG=
@@ -30,13 +35,13 @@ pull-certified-operators:
 offline-cataloger generate-manifests "certified-operators"
 
 
-# adjust bundle format
+# adjust bundle format if it's not nested
+.phony: nest 
 nest:
 operator-courier nest ${MANIFEST_DIR} ${OUPUT_DIR}
 
 # run migrate.sh
-
-#!/bin/bash
+migrate-bundle:
 set -e
 
 folder=$1
@@ -52,26 +57,21 @@ do
     echo "migrated ${dir}"
 done
 
-# add the missing labels to dockerfile
-label-docker-images:
+# Bundle images with operator-courier and add to Docker image
+build-bundle-images:
 
-
-
-# Bundle images with operator-courier
-bundle-images:
-podman build . -f [docker file]  -t [output tag]
-
-# create a new certification project of type 'operator bundle image'
+    # TODO operator-courier commands:
+    podman build . -f ${DOCKERFILE_PATH}  -t ${OUTPUT_TAG}
 
 # tag images with the project ID/tag
-tag-images:
-podman tag [image id] scan.connect.redhat.com/${PID}/${TAG}
+tag-bundle-images:
 
-# remove package-lock
-# ???
+    # TODO: get the image ID from the previous step
+    podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${TAG}
 
-bundle-push:
-podman push scan.connect.redhat.com/${PID}/${TAG}
+# Finally push to the official repo
+bundle-image-push:
+    podman push scan.connect.redhat.com/${PID}/${TAG}
 
 
 
