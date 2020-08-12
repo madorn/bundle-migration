@@ -19,7 +19,8 @@ LABEL_DELIVERY_BUNDLE='com.redhat.delivery.operator.bundle=true'
 # enable it since that is the first and last image.
 LABEL_DELIVERY_BACKPORT='com.redhat.delivery.backport=true'
 PID=
-TAG=
+OUTPUT_TAG=
+DOCKERFILE_PATH=
 
 # Download and install all tools
 .phony: get-tools
@@ -42,20 +43,18 @@ operator-courier nest ${MANIFEST_DIR} ${OUPUT_DIR}
 
 # run migrate.sh
 migrate-bundle:
-set -e
-
-folder=$1
-
-for dir in ${folder}/*/
-do
-    echo "migrating ${dir}"
-    opm alpha bundle generate --directory ${dir} --output-dir ${dir}
-    dir=${dir%*/}
-    version=${dir##*/} 
-    echo "LABEL com.redhat.openshift.versions=v4.5" >> bundle.Dockerfile
-    mv bundle.Dockerfile bundle-${version}.Dockerfile
-    echo "migrated ${dir}"
-done
+    set -e
+    folder=$1
+    for dir in ${folder}/*/
+    do
+        echo "migrating ${dir}"
+        opm alpha bundle generate --directory ${dir} --output-dir ${dir}
+        dir=${dir%*/}
+        version=${dir##*/} 
+        echo "LABEL com.redhat.openshift.versions=v4.5" >> bundle.Dockerfile
+        mv bundle.Dockerfile bundle-${version}.Dockerfile
+        echo "migrated ${dir}"
+    done
 
 # Bundle images with operator-courier and add to Docker image
 build-bundle-images:
@@ -67,7 +66,7 @@ build-bundle-images:
 tag-bundle-images:
 
     # TODO: get the image ID from the previous step
-    podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${TAG}
+    podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${OUTPUT_TAG}
 
 # Finally push to the official repo
 bundle-image-push:
