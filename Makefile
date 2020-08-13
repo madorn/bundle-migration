@@ -46,6 +46,9 @@ nest:
 # run migrate.sh
 migrate-bundle:
 	./migrate.sh ${BUNDLE_DIR}
+	echo "LABEL $LABEL_OCP_VER" >> ${DOCKERFILE_PATH}/*.Dockerfile
+        echo "LABEL $LABEL_DELIVERY_BUNDLE" >> ${DOCKERFILE_PATH}/*.Dockerfile
+        echo "LABEL $LABEL_DELIVERY_BACKPORT" >> ${DOCKERFILE_PATH}/*.Dockerfile
 
 # Bundle images with operator-courier and add to Docker image
 build-bundle-images:
