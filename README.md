@@ -30,4 +30,4 @@ make nest
 ```
 make bundle-migrate
 ```
-This last one runs opm under the hood and [here](opm_alpha_generate.md) you can find what opm is doing.
+This last one runs opm under the hood and [here](docs/opm_alpha_generate.md) you can find what opm is doing.
