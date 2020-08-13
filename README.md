@@ -54,6 +54,7 @@ make all FLAT=true
 If you want to go step by step follow the steps below:
 
 1) If the operator has a flat directory:
+
 Then run:
 ```
 $ make nest FLAT=true
