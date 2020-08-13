@@ -1,5 +1,10 @@
 ## Certified Operators Migration Step by Step
 
+    Requirements:
+    - offline-cataloger -> https://github.com/kevinrizza/offline-cataloger
+    - operator-courier -> https://github.com/operator-framework/operator-courier
+    - opm -> https://github.com/operator-framework/operator-registry/releases
+
 1) Clone the project and cd into it:
 ```
 git clone git@github.com:acmenezes/bundle-migration.git
