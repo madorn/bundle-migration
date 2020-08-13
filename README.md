@@ -1,6 +1,12 @@
 ## Certified Operators Migration Step by Step
 
-    Requirements:
+    REQUIRED MANUAL STEPS BEFORE RUNNING THIS
+    1. Login access.redhat.com with your masquared account 
+    2. Create a new certification project of type 'operator bundle image'
+    3. remove package-lock or ask someone to do it for the migrating operator
+  </br>
+
+    Software Requirements:
     - offline-cataloger -> https://github.com/kevinrizza/offline-cataloger
     - operator-courier -> https://github.com/operator-framework/operator-courier
     - opm -> https://github.com/operator-framework/operator-registry/releases
