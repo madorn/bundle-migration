@@ -7,7 +7,6 @@
       opm alpha bundle generate --directory ${dir} --output-dir ${dir}
       dir=${dir%*/}
       version=${dir##*/}
-      echo "LABEL com.redhat.openshift.versions=v4.5" >> bundle.Dockerfile
       mv bundle.Dockerfile ${folder}/bundle-${version}.Dockerfile
       echo "migrated ${dir}"
     done
