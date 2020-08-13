@@ -22,18 +22,60 @@ cd bundle-migration
 make pull-cert-operators
 ```
 
-3) Get the operator path and put into the BUNDLE_DIR variable:
-Example:
-```
-BUNDLE_DIR=manifests-851274669/portworx-certified/portworx-certified-5edb2jey
-```
-4) If the operator has a flat directory create a new one and put it into the OUTPUT_DIR variable and run the nest command:
+3) Configure the Makefile for the new operator:
 
 ```
-make nest
+BUILDER= <---- You may use docker or podman
+OPERATOR_NAME= <----- that should be the name in the outermost folder Ex: portworx-certified
+BUNDLE_DIR= <----- the whole path for the nested bundle from the root of this project like below
+
+        BUNDLE_DIR=manifests-435264820/portworx-certified/portworx-certified-5edb2jey
+
+PUSH_REGISTRY= <--- you may use quay as a first registry for testing here
+
+For production it should be like below:
+PUSH_REGISTRY=scan.connect.redhat.com
+
+PROJECT_ID= <--- retrieved from the new project id in connect.redhat.com with the masquarade account
 ```
-5) Run the migrate command that will generate the dockerfiles to build and push the images:
+
+4) If you want to test everything at once run:
+For nested directories:
+```
+make all
+```
+
+For flat directories:
+```
+make all FLAT=true
+```
+
+If you want to go step by step follow the steps below:
+
+1) If the operator has a flat directory:
+Then run:
+```
+$ make nest FLAT=true
+```
+Remark that the new one will have the old name and the old one will have `-flat-old` appended.
+
+2) Run the migrate command that will generate the dockerfiles to build and push the images:
 ```
 make bundle-migrate
 ```
 This last one runs opm under the hood and [here](docs/opm_alpha_generate.md) you can find what opm is doing.
+
+3) Build all images for each version of the current operator:
+```
+make build-bundle-images
+```
+
+4) Tag those images with the PUSH_REGISTRY configured (may be a test one or the final one):
+```
+make tag-bundle-images
+```
+
+5) Push the images tagged on the last step
+```
+make push-bundle-images
+```

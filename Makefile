@@ -1,29 +1,20 @@
-BUILDER=docker # you may use podman if in Linux
-OPERATOR_NAME=
-BUNDLE_DIR=manifests-435264820/portworx-certified/portworx-certified-5edb2jey
+BUILDER?=docker # you may use podman if in Linux
+OPERATOR_NAME=cic-operator
+BUNDLE_DIR=manifests-435264820/cic-operator
 PUSH_REGISTRY=
 # PUSH_REGISTRY=scan.connect.redhat.com #after testing uncomment this one
-PROJECT_ID=portworx-certified
-
-# This is used to control which index images should include this operator.
-LABEL_OCP_VER='com.redhat.openshift.versions="v4.5, v4.6"'
-
-# until cloudbld-2121 is done, you muse also add 
-# LABEL_DELIVERY_BUNDLE='com.redhat.delivery.operator.bundle=true'
-
-# Optionally, enable backporting in the generated dockerfile.  
-# You want to do this only for the last image that will be published 
-# as part of the migration.  For operators with only one release, 
-# enable it since that is the first and last image.
-LABEL_DELIVERY_BACKPORT='com.redhat.delivery.backport=true'
+PROJECT_ID=cic-operator
+FLAT?='false'
+# For nesting flat directories
+NESTED_DIR=${BUNDLE_DIR}-nested
 
 # Download and install all tools
 .phony: get-tools
 get-tools:
 
 # run all targets
-.phony: migrate-build-push
-migrate-build-push: migrate-bundle build-bundle-images tag-bundle-images push-bundle-image
+.phony: all
+all: nest migrate-bundle build-bundle-images tag-bundle-images push-bundle-images
 
 # Pull all certified operator manifests
 .phony: pull-cert-operators
@@ -34,7 +25,11 @@ pull-cert-operators:
 # adjust bundle format if it's not nested
 .phony: nest 
 nest:
-	operator-courier nest ${BUNDLE_DIR} ${OUPUT_DIR}
+	@if [ ${FLAT} == "true" ]; then \
+		operator-courier nest ${BUNDLE_DIR} ${NESTED_DIR}; \
+		mv ${BUNDLE_DIR} ${BUNDLE_DIR}-flat-old; \
+		mv ${NESTED_DIR} ${BUNDLE_DIR}; \
+	fi
 
 # Run migrate.sh
 # This command will generate the manisfests and metadata folder
