@@ -1,12 +1,9 @@
-# REQUIRED MANUAL STEPS BEFORE RUNNING THIS
-# 1. Login access.redhat.com with your masquared account 
-# 2. Create a new certification project of type 'operator bundle image'
-# 3. remove package-lock or ask someone to do it for the migrating operator
-
-BUNDLE_DIR=manifests-851274669/portworx-certified/portworx-certified-5edb2jey
-MANIFEST_DIR=
-OUTPUT_DIR=
-OUTPUT_TAG=
+BUILDER=docker # you may use podman if in Linux
+OPERATOR_NAME=
+BUNDLE_DIR=
+PUSH_REGISTRY=
+# PUSH_REGISTRY=scan.connect.redhat.com #after testing uncomment this one
+PROJECT_ID=portworx-certified
 
 # This is used to control which index images should include this operator.
 LABEL_OCP_VER='com.redhat.openshift.versions="v4.5, v4.6"'
@@ -19,9 +16,6 @@ LABEL_DELIVERY_BUNDLE='com.redhat.delivery.operator.bundle=true'
 # as part of the migration.  For operators with only one release, 
 # enable it since that is the first and last image.
 LABEL_DELIVERY_BACKPORT='com.redhat.delivery.backport=true'
-PID=
-OUTPUT_TAG=
-DOCKERFILE_PATH=
 
 # Download and install all tools
 .phony: get-tools
@@ -50,18 +44,20 @@ migrate-bundle:
 # Bundle images with operator-courier and add to Docker image
 build-bundle-images:
 
-	# TODO operator-courier commands:
-	podman build . -f ${DOCKERFILE_PATH}  -t ${OUTPUT_TAG}
-
+	for dockerfile in $$(ls -l1 ${BUNDLE_DIR} | grep bundle); \
+		do ${BUILDER} build . -f ${BUNDLE_DIR}/$$dockerfile  -t ${OPERATOR_NAME}:$$(echo $$dockerfile | cut -c8-12); \
+	done;
+	
 # tag images with the project ID/tag
 tag-bundle-images:
 
-	# TODO: get the image ID from the previous step
-	podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${OUTPUT_TAG}
+	for operator_tag in $$(${BUILDER} images | grep ${OPERATOR_NAME} | awk '{print $$2}'); \
+		do ${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+	done;
 
 # Finally push to the official repo
-bundle-image-push:
-	podman push scan.connect.redhat.com/${PID}/${TAG}
+push-bundle-image:
 
-
-
+	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
+		do ${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+	done;
