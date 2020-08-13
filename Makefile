@@ -1,6 +1,6 @@
 BUILDER=docker # you may use podman if in Linux
 OPERATOR_NAME=
-BUNDLE_DIR=
+BUNDLE_DIR=manifests-435264820/portworx-certified/portworx-certified-5edb2jey
 PUSH_REGISTRY=
 # PUSH_REGISTRY=scan.connect.redhat.com #after testing uncomment this one
 PROJECT_ID=portworx-certified
@@ -9,7 +9,7 @@ PROJECT_ID=portworx-certified
 LABEL_OCP_VER='com.redhat.openshift.versions="v4.5, v4.6"'
 
 # until cloudbld-2121 is done, you muse also add 
-LABEL_DELIVERY_BUNDLE='com.redhat.delivery.operator.bundle=true'
+# LABEL_DELIVERY_BUNDLE='com.redhat.delivery.operator.bundle=true'
 
 # Optionally, enable backporting in the generated dockerfile.  
 # You want to do this only for the last image that will be published 
@@ -22,9 +22,8 @@ LABEL_DELIVERY_BACKPORT='com.redhat.delivery.backport=true'
 get-tools:
 
 # run all targets
-.phony: all
-all: 
-# TODO - insert all targets if they can run seamlessly
+.phony: migrate-build-push
+migrate-build-push: migrate-bundle build-bundle-images tag-bundle-images push-bundle-image
 
 # Pull all certified operator manifests
 .phony: pull-cert-operators
@@ -37,18 +36,23 @@ pull-cert-operators:
 nest:
 	operator-courier nest ${BUNDLE_DIR} ${OUPUT_DIR}
 
-# run migrate.sh
+# Run migrate.sh
+# This command will generate the manisfests and metadata folder
+# as well as the correspondent Dockerfile
+.phony: migrate-bundle
 migrate-bundle:
 	./migrate.sh ${BUNDLE_DIR}
 
-# Bundle images with operator-courier and add to Docker image
+# Build an image for each version
+.phony: build-bundle-images
 build-bundle-images:
 
 	for dockerfile in $$(ls -l1 ${BUNDLE_DIR} | grep bundle); \
 		do ${BUILDER} build . -f ${BUNDLE_DIR}/$$dockerfile  -t ${OPERATOR_NAME}:$$(echo $$dockerfile | cut -c8-12); \
 	done;
 	
-# tag images with the project ID/tag
+# Tag images with the project ID/tag
+.phony: tag-bundle-images
 tag-bundle-images:
 
 	for operator_tag in $$(${BUILDER} images | grep ${OPERATOR_NAME} | awk '{print $$2}'); \
@@ -56,7 +60,8 @@ tag-bundle-images:
 	done;
 
 # Finally push to the official repo
-push-bundle-image:
+.phony: push-bundle-images
+push-bundle-images:
 
 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
 		do ${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
