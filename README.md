@@ -11,6 +11,8 @@
     - operator-courier -> https://github.com/operator-framework/operator-courier
     - opm -> https://github.com/operator-framework/operator-registry/releases
 
+#### Prepare the environment:
+
 1) Clone the project and cd into it:
 ```
 git clone git@github.com:acmenezes/bundle-migration.git
@@ -22,7 +24,7 @@ cd bundle-migration
 make pull-cert-operators
 ```
 
-3) Configure the Makefile for the new operator:
+3) Configure the Makefile for the operator being migrated:
 
 ```
 BUILDER= <---- You may use docker or podman
@@ -38,8 +40,9 @@ PUSH_REGISTRY=scan.connect.redhat.com
 
 PROJECT_ID= <--- retrieved from the new project id in connect.redhat.com with the masquarade account
 ```
+---
 
-4) If you want to test everything at once run:
+#### If you want to test/run everything at once run:
 
 For nested directories:
 ```
@@ -51,7 +54,9 @@ For flat directories:
 make all FLAT=true
 ```
 
-If you want to go step by step follow the steps below:
+---
+
+#### If you want to go step by step follow the steps below:
 
 1) If the operator has a flat directory:
 
