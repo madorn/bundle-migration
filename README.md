@@ -40,6 +40,7 @@ PROJECT_ID= <--- retrieved from the new project id in connect.redhat.com with th
 ```
 
 4) If you want to test everything at once run:
+
 For nested directories:
 ```
 make all

@@ -8,10 +8,6 @@ FLAT?='false'
 # For nesting flat directories
 NESTED_DIR=${BUNDLE_DIR}-nested
 
-# Download and install all tools
-.phony: get-tools
-get-tools:
-
 # run all targets
 .phony: all
 all: nest migrate-bundle build-bundle-images tag-bundle-images push-bundle-images
