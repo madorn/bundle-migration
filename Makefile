@@ -3,6 +3,7 @@
 # 2. Create a new certification project of type 'operator bundle image'
 # 3. remove package-lock or ask someone to do it for the migrating operator
 
+BUNDLE_DIR=manifests-851274669/portworx-certified/portworx-certified-5edb2jey
 MANIFEST_DIR=
 OUTPUT_DIR=
 OUTPUT_TAG=
@@ -32,45 +33,35 @@ all:
 # TODO - insert all targets if they can run seamlessly
 
 # Pull all certified operator manifests
-pull-certified-operators: 
-offline-cataloger generate-manifests "certified-operators"
+.phony: pull-cert-operators
+pull-cert-operators: 
 
+	offline-cataloger generate-manifests "certified-operators"
 
 # adjust bundle format if it's not nested
 .phony: nest 
 nest:
-operator-courier nest ${MANIFEST_DIR} ${OUPUT_DIR}
+	operator-courier nest ${BUNDLE_DIR} ${OUPUT_DIR}
 
 # run migrate.sh
 migrate-bundle:
-    set -e
-    folder=$1
-    for dir in ${folder}/*/
-    do
-        echo "migrating ${dir}"
-        opm alpha bundle generate --directory ${dir} --output-dir ${dir}
-        dir=${dir%*/}
-        version=${dir##*/} 
-        echo "LABEL com.redhat.openshift.versions=v4.5" >> bundle.Dockerfile
-        mv bundle.Dockerfile bundle-${version}.Dockerfile
-        echo "migrated ${dir}"
-    done
+	./migrate.sh ${BUNDLE_DIR}
 
 # Bundle images with operator-courier and add to Docker image
 build-bundle-images:
 
-    # TODO operator-courier commands:
-    podman build . -f ${DOCKERFILE_PATH}  -t ${OUTPUT_TAG}
+	# TODO operator-courier commands:
+	podman build . -f ${DOCKERFILE_PATH}  -t ${OUTPUT_TAG}
 
 # tag images with the project ID/tag
 tag-bundle-images:
 
-    # TODO: get the image ID from the previous step
-    podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${OUTPUT_TAG}
+	# TODO: get the image ID from the previous step
+	podman tag ${IMAGE_ID} scan.connect.redhat.com/${PID}/${OUTPUT_TAG}
 
 # Finally push to the official repo
 bundle-image-push:
-    podman push scan.connect.redhat.com/${PID}/${TAG}
+	podman push scan.connect.redhat.com/${PID}/${TAG}
 
 
 
