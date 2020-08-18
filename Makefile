@@ -1,7 +1,7 @@
 BUILDER?=docker # you may use podman if in Linux
-OPERATOR_NAME=cic-operator
-BUNDLE_DIR=manifests-435264820/cic-operator
-PUSH_REGISTRY=
+OPERATOR_NAME?=cic-operator
+BUNDLE_DIR?=manifests-435264820/cic-operator
+PUSH_REGISTRY?=quay.io
 # PUSH_REGISTRY=scan.connect.redhat.com #after testing uncomment this one
 PROJECT_ID=cic-operator
 FLAT?='false'
