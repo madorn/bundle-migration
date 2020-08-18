@@ -47,7 +47,8 @@ build-bundle-images:
 tag-bundle-images:
 
 	for operator_tag in $$(${BUILDER} images | grep ${OPERATOR_NAME} | awk '{print $$2}'); \
-		do ${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+		do echo "tagging ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
+		${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
 	done;
 
 # Finally push to the official repo
@@ -55,5 +56,6 @@ tag-bundle-images:
 push-bundle-images:
 
 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
-		do ${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+		do echo "pushing ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
+		${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
 	done;
