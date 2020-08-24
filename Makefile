@@ -10,7 +10,7 @@ NESTED_DIR=${BUNDLE_DIR}-nested
 
 # run all targets
 .phony: all
-all: nest migrate-bundle build-bundle-images tag-bundle-images push-bundle-images
+all: nest migrate-bundle build-bundle-images tag-bundle-images
 
 # Pull all certified operator manifests
 .phony: pull-cert-operators
@@ -51,11 +51,15 @@ tag-bundle-images:
 		${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
 	done;
 
-# Finally push to the official repo
-.phony: push-bundle-images
-push-bundle-images:
+# If versions are to be pushed individually just do:
+# podman or docker images on local machine and pick the right version, then
+# podman or docker push with format ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag;
 
-	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
-		do echo "pushing ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
-		${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
-	done;
+# Finally push to the official repo
+# .phony: push-bundle-images
+# push-bundle-images:
+
+# 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
+# 		do echo "pushing ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
+# 		${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+# 	done;

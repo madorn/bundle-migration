@@ -83,6 +83,14 @@ make tag-bundle-images
 ```
 
 5) Push the images tagged on the last step
+
 ```
-make push-bundle-images
+If versions are to be pushed individually just do:
+
+$ podman or docker images on local machine and pick the right version, then
+$ podman or docker push with format ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag;
+
+replacing PUSH_REGISTRY and PROJECT_ID accordingly.
+
+make push-bundle-images is commented out but may be used if needed to push in bulk
 ```

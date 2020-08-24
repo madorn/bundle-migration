@@ -16,12 +16,16 @@
 
   set -e
   folder=$1
-  last_image=0
-  counter=1
-  for dir in ${folder}/*/
-    do
-      last_image=$((last_image+1))
-    done;
+
+  # If the backport label becomes necessary uncomment this:
+
+  # last_image=0
+  # counter=1
+  # for dir in ${folder}/*/
+  #   do
+  #     last_image=$((last_image+1))
+  #   done;
+
   for dir in ${folder}/*/
     do
       echo "migrating ${dir}"
@@ -31,11 +35,18 @@
       echo "LABEL com.redhat.openshift.versions=\"v4.5, 4.6\"" >> bundle.Dockerfile
       # until cloudbld-2121 is done, you muse also add 
       echo "LABEL com.redhat.delivery.operator.bundle=true" >> bundle.Dockerfile
-      if ((counter==last_image))
-      then
-        echo "LABEL com.redhat.delivery.backport=true" >> bundle.Dockerfile
-      fi
+
+      # If the backport label becomes necessary uncomment this:
+
+      # if ((counter==last_image))
+      # then
+      #   echo "LABEL com.redhat.delivery.backport=true" >> bundle.Dockerfile
+      # fi
+            
       mv bundle.Dockerfile ${folder}/bundle-${version}.Dockerfile
       echo "migrated ${dir}"
-      ((counter=counter+1))
+
+      # If the backport label becomes necessary uncomment this:
+            
+      # ((counter=counter+1))
     done
