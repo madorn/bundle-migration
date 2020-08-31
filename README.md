@@ -1,7 +1,7 @@
 ## Certified Operators Migration Step by Step
 
     REQUIRED MANUAL STEPS BEFORE RUNNING THIS
-    1. Login access.redhat.com with your masquared account 
+    1. Login access.redhat.com/user with your masquared account 
     2. Create a new certification project of type 'operator bundle image'
     3. remove package-lock or ask someone to do it for the migrating operator
   </br>
