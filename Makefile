@@ -1,8 +1,7 @@
 BUILDER?=docker # you may use podman if in Linux
 OPERATOR_NAME?=cic-operator
 BUNDLE_DIR?=manifests-435264820/cic-operator
-PUSH_REGISTRY?=quay.io
-# PUSH_REGISTRY=scan.connect.redhat.com #after testing uncomment this one
+PUSH_REGISTRY?=scan.connect.redhat.com
 PROJECT_ID=cic-operator
 FLAT?='false'
 # For nesting flat directories
@@ -38,8 +37,9 @@ migrate-bundle:
 .phony: build-bundle-images
 build-bundle-images:
 
-	for dockerfile in $$(ls -l1 ${BUNDLE_DIR} | grep bundle); \
-		do ${BUILDER} build . -f ${BUNDLE_DIR}/$$dockerfile  -t ${OPERATOR_NAME}:$$(echo $$dockerfile | cut -c8-12); \
+	for dockerfile in $$(ls -1 ${BUNDLE_DIR} | grep bundle); \
+		do echo "build . -f ${BUNDLE_DIR}/$$dockerfile  -t ${OPERATOR_NAME}:$$(echo $$dockerfile | sed 's/.Dockerfile//' | cut -c8-18)"; \
+		${BUILDER} build . -f ${BUNDLE_DIR}/$$dockerfile  -t ${OPERATOR_NAME}:$$(echo $$dockerfile | sed 's/.Dockerfile//' | cut -c8-18); \
 	done;
 	
 # Tag images with the project ID/tag
