@@ -9,7 +9,7 @@ NESTED_DIR=${BUNDLE_DIR}-nested
 
 # run all targets
 .phony: all
-all: nest migrate-bundle build-bundle-images tag-bundle-images push-bundle-images
+all: nest migrate-bundle build-bundle-images tag-bundle-images #push-bundle-images
 
 # Pull all certified operator manifests
 .phony: pull-cert-operators
