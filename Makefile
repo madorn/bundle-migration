@@ -1,8 +1,8 @@
 BUILDER?=docker # you may use podman if in Linux
-OPERATOR_NAME?=cic-operator
-BUNDLE_DIR?=manifests-435264820/cic-operator
+OPERATOR_NAME?=
+BUNDLE_DIR?=
 PUSH_REGISTRY?=scan.connect.redhat.com
-PROJECT_ID=cic-operator
+PROJECT_ID=
 FLAT?='false'
 # For nesting flat directories
 NESTED_DIR=${BUNDLE_DIR}-nested
