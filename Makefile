@@ -9,7 +9,7 @@ NESTED_DIR=${BUNDLE_DIR}-nested
 
 # run all targets
 .phony: all
-all: nest migrate-bundle build-bundle-images tag-bundle-images
+all: nest migrate-bundle build-bundle-images tag-bundle-images push-bundle-images
 
 # Pull all certified operator manifests
 .phony: pull-cert-operators
@@ -47,8 +47,8 @@ build-bundle-images:
 tag-bundle-images:
 
 	for operator_tag in $$(${BUILDER} images | grep ${OPERATOR_NAME} | awk '{print $$2}'); \
-		do echo "tagging ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
-		${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
+		do echo "tagging ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag"; \
+		${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag; \
 	done;
 
 # If versions are to be pushed individually just do:
@@ -56,10 +56,9 @@ tag-bundle-images:
 # podman or docker push with format ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag;
 
 # Finally push to the official repo
-# .phony: push-bundle-images
-# push-bundle-images:
+.phony: push-bundle-images
+push-bundle-images:
 
-# 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
-# 		do echo "pushing ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag"; \
-# 		${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag; \
-# 	done;
+	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
+		do echo "${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag"; \
+ 	done;
