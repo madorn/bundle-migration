@@ -56,9 +56,9 @@ tag-bundle-images:
 # podman or docker push with format ${PUSH_REGISTRY}/${PROJECT_ID}:$$operator_tag;
 
 # Finally push to the official repo
-.phony: push-bundle-images
-push-bundle-images:
+# .phony: push-bundle-images
+# push-bundle-images:
 
-	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
-		do echo "${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag"; \
- 	done;
+# 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
+# 		do echo "${BUILDER} push ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag"; \
+#  	done;
