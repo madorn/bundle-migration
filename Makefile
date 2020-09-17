@@ -1,8 +1,8 @@
 BUILDER?=docker # you may use podman if in Linux
-OPERATOR_NAME?=couchbase-enterprise-operator
-BUNDLE_DIR?=manifests-686203209/couchbase-enterprise-certified/couchbase-enterprise-certified-7_fyo8k4
+OPERATOR_NAME?=orca-operator
+BUNDLE_DIR?=manifests-686203209/orca
 PUSH_REGISTRY?=scan.connect.redhat.com
-PROJECT_ID=couchbase-enterprise-operator
+PROJECT_ID=ospid-ebce0336-109b-4da5-84a4-5d1ed159b67c
 FLAT?='false'
 # For nesting flat directories
 NESTED_DIR=${BUNDLE_DIR}-nested
@@ -55,7 +55,7 @@ tag-bundle-images:
 		${BUILDER} tag ${OPERATOR_NAME}:$$operator_tag ${PUSH_REGISTRY}/${PROJECT_ID}/${OPERATOR_NAME}:$$operator_tag; \
 	done;
 
-.phony
+.phony: echo-push-commands
 echo-push-commands:
 
 	for operator_tag in $$(${BUILDER} images | grep ${PUSH_REGISTRY}/${PROJECT_ID} | awk '{print $$2}'); \
