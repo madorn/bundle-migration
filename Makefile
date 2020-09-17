@@ -1,8 +1,8 @@
 BUILDER?=docker # you may use podman if in Linux
-OPERATOR_NAME?=
-BUNDLE_DIR?=
+OPERATOR_NAME?=couchbase-enterprise-operator
+BUNDLE_DIR?=manifests-686203209/couchbase-enterprise-certified/couchbase-enterprise-certified-7_fyo8k4
 PUSH_REGISTRY?=scan.connect.redhat.com
-PROJECT_ID=
+PROJECT_ID=couchbase-enterprise-operator
 FLAT?='false'
 # For nesting flat directories
 NESTED_DIR=${BUNDLE_DIR}-nested
@@ -32,6 +32,10 @@ nest:
 .phony: migrate-bundle
 migrate-bundle:
 	./migrate.sh ${BUNDLE_DIR}
+
+.phony: check-csv
+csv-check:
+	./csv_check.py ${BUNDLE_DIR}
 
 # Build an image for each version
 .phony: build-bundle-images
